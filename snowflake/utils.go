@@ -10,16 +10,17 @@ type Constant struct {
 	NodeBits uint8
 	StepBits uint8
 
-	nodeMax   int64
-	nodeMask  int64
-	stepMask  int64
-	timeShift uint8
-	nodeShift uint8
+	// nodeMax   int64
+	// nodeMask  int64
+	// stepMask  int64
+	// timeShift uint8
+	// nodeShift uint8
 }
 
 func getEnvInt64(envName string) int64 {
 	var res, err = strconv.ParseInt(os.Getenv(envName), 10, 64)
 	if err != nil {
+		ErrorLogger.Fatal(err)
 		return 0
 	}
 	return res
@@ -28,6 +29,7 @@ func getEnvInt64(envName string) int64 {
 func getEnvUint8(envName string) uint8 {
 	var res, err = strconv.ParseUint(os.Getenv(envName), 10, 8)
 	if err != nil {
+		ErrorLogger.Fatal(err)
 		return 0
 	}
 	return uint8(res)
@@ -39,6 +41,7 @@ func InitConstant() (*Constant, error) {
 
 	constant.Epoch = getEnvInt64("EPOCH")
 	constant.NodeBits = getEnvUint8("NODE_BITS")
+	constant.StepBits = getEnvUint8("STEP_BITS")
 
 	return &constant, err
 }

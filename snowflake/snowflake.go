@@ -1,6 +1,8 @@
 package snowflake
 
 import (
+	"errors"
+	"strconv"
 	"sync"
 	"time"
 )
@@ -21,6 +23,49 @@ type Node struct {
 
 type ID int64
 
-// func main() {
-// 	fmt.Println(os.Getenv("EPOCH"))
-// }
+func NewNode(node int64, constant *Constant) (*Node, error) {
+	n := Node{}
+	n.node = node
+	n.nodeMax = -1 ^ (-1 << constant.NodeBits)
+	n.nodeMask = n.nodeMax << int64(constant.StepBits)
+	n.stepMask = -1 ^ (-1 << constant.StepBits)
+	n.timeShift = int64(constant.StepBits) + int64(constant.NodeBits)
+	n.nodeShift = int64(constant.StepBits)
+
+	if n.node < 0 || n.node > n.nodeMax {
+		return nil, errors.New("Node number must be between 0 and " + strconv.FormatInt(n.nodeMax, 10))
+	}
+
+	var curTime = time.Now()
+	n.epoch = curTime.Add(time.Unix(constant.Epoch/1000, (constant.Epoch%1000)*1000000).Sub(curTime))
+
+	InfoLogger.Printf("Successfully initialize new UUID Distributed SnowFlake's Generator with NodeID: %d", n.node)
+	return &n, nil
+}
+
+func (n *Node) Generate() ID {
+	n.mu.Lock()
+
+	now := time.Since(n.epoch).Milliseconds()
+	if now == n.time {
+		n.step = (n.step + 1) & n.stepMask
+		if n.step == 0 {
+			for now <= n.time {
+				now = time.Since(n.epoch).Milliseconds()
+			}
+		}
+	} else {
+		n.step = 1
+	}
+
+	n.time = now
+	var res = (now << n.timeShift) | (n.node << n.nodeShift) | (n.step)
+
+	n.mu.Unlock()
+	return ID(res)
+}
+
+// Int64 returns an int64 of the snowflake ID
+func (f ID) Int64() int64 {
+	return int64(f)
+}
