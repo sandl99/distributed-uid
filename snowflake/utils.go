@@ -17,7 +17,7 @@ type Constant struct {
 	// nodeShift uint8
 }
 
-func getEnvInt64(envName string) int64 {
+func GetEnvInt64(envName string) int64 {
 	var res, err = strconv.ParseInt(os.Getenv(envName), 10, 64)
 	if err != nil {
 		ErrorLogger.Fatal(err)
@@ -26,7 +26,7 @@ func getEnvInt64(envName string) int64 {
 	return res
 }
 
-func getEnvUint8(envName string) uint8 {
+func GetEnvUint8(envName string) uint8 {
 	var res, err = strconv.ParseUint(os.Getenv(envName), 10, 8)
 	if err != nil {
 		ErrorLogger.Fatal(err)
@@ -39,9 +39,9 @@ func InitConstant() (*Constant, error) {
 	var constant = Constant{}
 	var err error
 
-	constant.Epoch = getEnvInt64("EPOCH")
-	constant.NodeBits = getEnvUint8("NODE_BITS")
-	constant.StepBits = getEnvUint8("STEP_BITS")
+	constant.Epoch = GetEnvInt64("EPOCH")
+	constant.NodeBits = GetEnvUint8("NODE_BITS")
+	constant.StepBits = GetEnvUint8("STEP_BITS")
 
 	return &constant, err
 }

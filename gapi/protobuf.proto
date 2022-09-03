@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+option go_package = "./gapi";
+
+message UidRequest {
+
+}
+
+message UidResponse {
+	int64 uuid = 1;
+}
+
+service SnowFlakeService {
+	rpc Generate(UidRequest) returns (UidResponse) {};
+}

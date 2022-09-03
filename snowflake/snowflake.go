@@ -7,7 +7,18 @@ import (
 	"time"
 )
 
-type Node struct {
+type ID int64
+
+// Int64 returns an int64 of the snowflake ID
+func (f ID) Int64() int64 {
+	return int64(f)
+}
+
+type ISnowFlake interface {
+	Generate() ID
+}
+
+type SnowFlake struct {
 	mu    sync.Mutex
 	epoch time.Time
 	time  int64
@@ -21,10 +32,8 @@ type Node struct {
 	nodeShift int64
 }
 
-type ID int64
-
-func NewNode(node int64, constant *Constant) (*Node, error) {
-	n := Node{}
+func NewSnowFlake(node int64, constant *Constant) (*SnowFlake, error) {
+	n := SnowFlake{}
 	n.node = node
 	n.nodeMax = -1 ^ (-1 << constant.NodeBits)
 	n.nodeMask = n.nodeMax << int64(constant.StepBits)
@@ -43,7 +52,7 @@ func NewNode(node int64, constant *Constant) (*Node, error) {
 	return &n, nil
 }
 
-func (n *Node) Generate() ID {
+func (n *SnowFlake) Generate() ID {
 	n.mu.Lock()
 
 	now := time.Since(n.epoch).Milliseconds()
@@ -62,10 +71,6 @@ func (n *Node) Generate() ID {
 	var res = (now << n.timeShift) | (n.node << n.nodeShift) | (n.step)
 
 	n.mu.Unlock()
+	InfoLogger.Printf("Successful generate %d", res)
 	return ID(res)
-}
-
-// Int64 returns an int64 of the snowflake ID
-func (f ID) Int64() int64 {
-	return int64(f)
 }
