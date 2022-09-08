@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"net"
 
@@ -11,14 +12,19 @@ import (
 
 func main() {
 	snowflake.InfoLogger.Println("Starting the application...")
-	port := snowflake.GetEnvInt64("PORT")
+
+	var port int
+	var node int64
+	flag.IntVar(&port, "port", 8000, "port for application.")
+	flag.Int64Var(&node, "node", 1, "node id for snowflake.")
+	flag.Parse()
 
 	constant, err := snowflake.InitConstant()
 	if err != nil {
 		snowflake.ErrorLogger.Fatal(err)
 	}
 
-	snowflaker, err := snowflake.NewSnowFlake(1, constant)
+	snowflaker, err := snowflake.NewSnowFlake(node, constant)
 	if err != nil {
 		snowflake.ErrorLogger.Fatal(err)
 	}

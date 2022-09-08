@@ -5,4 +5,4 @@ clean:
 	rm gapi/*.pb.go
 
 server:
-	go run .
+	go run main.go --port=8080 --node=2
