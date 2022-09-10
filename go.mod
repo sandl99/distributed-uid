@@ -1,4 +1,4 @@
-module github.com/sandl99/distrbuted-uid
+module github.com/sandl99/distributed-uid
 
 go 1.18
 

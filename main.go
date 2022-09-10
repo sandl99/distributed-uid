@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"net"
 
-	"github.com/sandl99/distrbuted-uid/gapi"
-	"github.com/sandl99/distrbuted-uid/snowflake"
+	"github.com/sandl99/distributed-uid/gapi"
+	"github.com/sandl99/distributed-uid/snowflake"
 	"google.golang.org/grpc"
 )
 

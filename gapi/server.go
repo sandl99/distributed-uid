@@ -4,7 +4,7 @@ import (
 	"context"
 	"log"
 
-	"github.com/sandl99/distrbuted-uid/snowflake"
+	"github.com/sandl99/distributed-uid/snowflake"
 )
 
 type SnowFlakeServer struct {
